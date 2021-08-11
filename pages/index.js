@@ -8,6 +8,9 @@ import { csrfToken } from '../lib/csrf';
 const Home = () =>  {
 
   const [link, setLink] = useState('')
+  const [shortLink, setShortLink] = useState(null)
+
+  console.log(shortLink)
 
   const makeRequest = async () => {
     // Here maybe check to see if the link meet RFC standard? 
@@ -16,12 +19,12 @@ const Home = () =>  {
        
       try {
       const headers = {'XSRF-TOKEN': csrfToken}
-      const data = await axios.post('api/url-shortner', {
+      const {data} = await axios.post('api/url-shortner', {
         url: link,
        }, {headers:headers}
       )
 
-      console.log(data)
+      setShortLink(data)
     } catch (e) {
       console.warn(e)
     }
@@ -51,18 +54,11 @@ const Home = () =>  {
     
         <input value={link} placeholder="https://example.com/felknjfeelknfelkn;gfnklefg/" type="text" onChange={(e) => setLink(e.target.value)} />
         <button onClick={makeRequest}> Go!</button>
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
+       {shortLink && <div className="grid">
+          <a href={`${shortLink.generatedLink}`} className="card">
+          {shortLink.generatedLink}
           </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-        </div>
+        </div> }
       </div>
 
 
