@@ -2,30 +2,7 @@ import { connectToDatabase } from '../lib/mongodb'
 
 import { useEffect } from 'react'
 
-export async function getServerSideProps(context) {
-    const { link: myLink } = context.query
-    const { client, db } = await connectToDatabase()
-    const collection = db.collection('shortner')
-    const isConnected = await client.isConnected()
-
-    if (isConnected) {
-        const formattedLink = `${process.env.DOMAIN}/${myLink}`
-        const { originalURL } = getUrlFromShortCode(collection)
-
-        return originalURL
-            ? {
-                  props: {
-                      generatedLink: formattedLink,
-                      destinationURL: originalURL,
-                  },
-              }
-            : redirectToIndex()
-    } else {
-        return redirectToIndex()
-    }
-}
-
-const getUrlFromShortCode = async (collection) => {
+const getUrlFromShortCode = async (collection, formattedLink) => {
     const queryOptions = {
         projection: { originalURL: 1, generatedLink: 1 },
     }
@@ -33,7 +10,8 @@ const getUrlFromShortCode = async (collection) => {
     const foundRecord = await collection
         .find({ generatedLink: formattedLink }, queryOptions)
         .toArray()
-    return foundRecord.length ? foundRecord[0] : []
+
+    return foundRecord ? foundRecord[0] : []
 }
 
 const redirectToIndex = () => ({
@@ -42,6 +20,32 @@ const redirectToIndex = () => ({
         destination: '/',
     },
 })
+
+export async function getServerSideProps(context) {
+    const { link: myLink } = context.query
+    const { client, db } = await connectToDatabase()
+    const collection = db.collection('shortner')
+    const isConnected = await client.isConnected()
+
+    if (isConnected) {
+        const formattedLink = `${process.env.DOMAIN}/${myLink}`
+        const { originalURL = '', ...rest } = await getUrlFromShortCode(
+            collection,
+            formattedLink
+        )
+
+        return originalURL
+            ? {
+                  props: {
+                      generatedLink: `${formattedLink}`,
+                      destinationURL: `${originalURL}`,
+                  },
+              }
+            : redirectToIndex()
+    } else {
+        return redirectToIndex()
+    }
+}
 
 const Redirect = ({ destinationURL }) => {
     useEffect(() => {

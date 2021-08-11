@@ -8,8 +8,6 @@ const Home = () => {
     const [link, setLink] = useState('')
     const [shortLink, setShortLink] = useState(null)
 
-    console.log(shortLink)
-
     const makeRequest = async () => {
         // Here maybe check to see if the link meet RFC standard?
         if (link) {
