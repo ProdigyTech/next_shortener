@@ -1,32 +1,56 @@
 import Head from 'next/head'
-import { connectToDatabase } from '../lib/mongodb'
+import { useState } from 'react'
+import axios from 'axios'
 
-export default function Home({ isConnected }) {
+import { csrfToken } from '../lib/csrf';
+
+
+const Home = () =>  {
+
+  const [link, setLink] = useState('')
+
+  const makeRequest = async () => {
+    // Here maybe check to see if the link meet RFC standard? 
+    if (link) {
+      
+       
+      try {
+      const headers = {'XSRF-TOKEN': csrfToken}
+      const data = await axios.post('api/url-shortner', {
+        url: link,
+       }, {headers:headers}
+      )
+
+      console.log(data)
+    } catch (e) {
+      console.warn(e)
+    }
+
+    } else {
+      alert('Invalid URL')
+    }
+  }
+
+
   return (
     <div className="container">
       <Head>
-        <title>Create Next App</title>
+        <title>Next Shortner</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js with MongoDB!</a>
-        </h1>
+      <div class="body">
+          <h1 className="title">
+            Next Shortner
+          </h1>
 
-        {isConnected ? (
-          <h2 className="subtitle">You are connected to MongoDB</h2>
-        ) : (
+    
           <h2 className="subtitle">
-            You are NOT connected to MongoDB. Check the <code>README.md</code>{' '}
-            for instructions.
+            Enter a URL and have it shortened to make sharing easier
           </h2>
-        )}
-
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
+    
+        <input value={link} placeholder="https://example.com/felknjfeelknfelkn;gfnklefg/" type="text" onChange={(e) => setLink(e.target.value)} />
+        <button onClick={makeRequest}> Go!</button>
         <div className="grid">
           <a href="https://nextjs.org/docs" className="card">
             <h3>Documentation &rarr;</h3>
@@ -38,36 +62,9 @@ export default function Home({ isConnected }) {
             <p>Learn about Next.js in an interactive course with quizzes!</p>
           </a>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
         </div>
-      </main>
+      </div>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
 
       <style jsx>{`
         .container {
@@ -79,7 +76,7 @@ export default function Home({ isConnected }) {
           align-items: center;
         }
 
-        main {
+        .body {
           padding: 5rem 0;
           flex: 1;
           display: flex;
@@ -222,12 +219,4 @@ export default function Home({ isConnected }) {
   )
 }
 
-export async function getServerSideProps(context) {
-  const { client } = await connectToDatabase()
-
-  const isConnected = await client.isConnected()
-
-  return {
-    props: { isConnected },
-  }
-}
+export default Home
