@@ -29,10 +29,8 @@ export async function getServerSideProps(context) {
 
     if (isConnected) {
         const formattedLink = `${process.env.DOMAIN}/${myLink}`
-        const { originalURL = '', ...rest } = await getUrlFromShortCode(
-            collection,
-            formattedLink
-        )
+        const { originalURL } =
+            (await getUrlFromShortCode(collection, formattedLink)) || {}
 
         return originalURL
             ? {

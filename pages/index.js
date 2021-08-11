@@ -1,26 +1,17 @@
 import Head from 'next/head'
 import { useState } from 'react'
-import axios from 'axios'
 
 import { csrfToken } from '../lib/csrf'
+import { createShortLinkRequest } from '../lib/util'
 
 const Home = () => {
     const [link, setLink] = useState('')
     const [shortLink, setShortLink] = useState(null)
 
     const makeRequest = async () => {
-        // Here maybe check to see if the link meet RFC standard?
         if (link) {
             try {
-                const headers = { 'XSRF-TOKEN': csrfToken }
-                const { data } = await axios.post(
-                    'api/url-shortner',
-                    {
-                        url: link,
-                    },
-                    { headers: headers }
-                )
-
+                const { data } = await createShortLinkRequest(csrfToken, link)
                 setShortLink(data)
             } catch (e) {
                 console.warn(e)
