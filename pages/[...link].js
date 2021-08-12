@@ -49,7 +49,7 @@ const Redirect = ({ destinationURL }) => {
     useEffect(() => {
         window.location.replace(destinationURL)
     }, [])
-    return <></>
+    return null
 }
 
 export default Redirect
