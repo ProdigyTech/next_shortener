@@ -2,13 +2,13 @@ import { connectToDatabase } from '../lib/mongodb'
 
 import { useEffect } from 'react'
 
-const getUrlFromShortCode = async (collection, formattedLink) => {
+const getUrlFromShortCode = async (collection, shortCode) => {
     const queryOptions = {
-        projection: { originalURL: 1, generatedLink: 1 },
+        projection: { originalURL: 1, shortCode: 1 },
     }
 
     const foundRecord = await collection
-        .find({ generatedLink: formattedLink }, queryOptions)
+        .find({ shortCode: shortCode }, queryOptions)
         .toArray()
 
     return foundRecord ? foundRecord[0] : []
@@ -22,20 +22,19 @@ const redirectToIndex = () => ({
 })
 
 export async function getServerSideProps(context) {
-    const { link: myLink } = context.query
+    const { link: shortCode } = context.query
+
     const { client, db } = await connectToDatabase()
-    const collection = db.collection('shortner')
+    const collection = db.collection('shortener')
     const isConnected = await client.isConnected()
 
     if (isConnected) {
-        const formattedLink = `${process.env.DOMAIN}/${myLink}`
         const { originalURL } =
-            (await getUrlFromShortCode(collection, formattedLink)) || {}
+            (await getUrlFromShortCode(collection, shortCode[0])) || {}
 
         return originalURL
             ? {
                   props: {
-                      generatedLink: `${formattedLink}`,
                       destinationURL: `${originalURL}`,
                   },
               }

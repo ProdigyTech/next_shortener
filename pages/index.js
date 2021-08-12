@@ -5,7 +5,7 @@ const Home = () => {
     return (
         <div className="container">
             <Head>
-                <title>Next Shortner</title>
+                <title>Next Shortener</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 

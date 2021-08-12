@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { csrfToken } from '../lib/csrf'
 import { createShortLink, formatLink } from '../lib/util'
 import Loader from 'react-loader-spinner'
@@ -7,6 +7,11 @@ export const ShortCodeGenerator = () => {
     const [link, setLink] = useState('')
     const [shortLink, setShortLink] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [location, setLocation] = useState(null)
+
+    useEffect(() => {
+        setLocation(document.location.href)
+    }, [])
 
     const makeRequest = async () => {
         if (link) {
@@ -32,7 +37,7 @@ export const ShortCodeGenerator = () => {
             <h1 className="title">Next Shortner</h1>
 
             <h2 className="subtitle">
-                Enter a URL and have it shortened to make sharing easier
+                Enter a URL and have it Shortened to make sharing easier
             </h2>
 
             <input
@@ -44,7 +49,7 @@ export const ShortCodeGenerator = () => {
             />
             <button className={`btn--submit`} onClick={makeRequest}>
                 {' '}
-                Go!
+                Shorten!
             </button>
             {isLoading && (
                 <div className="loader">
@@ -58,9 +63,10 @@ export const ShortCodeGenerator = () => {
             )}
             {shortLink && !isLoading && (
                 <div className="grid">
-                    <a href={`${shortLink.generatedLink}`} className="card">
-                        {shortLink.generatedLink}
-                    </a>
+                    <div className="card gen--link">
+                        {location}
+                        {shortLink.shortCode}
+                    </div>
                 </div>
             )}
         </div>

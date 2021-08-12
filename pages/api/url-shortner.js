@@ -5,7 +5,7 @@ import { insertNewRecord } from '../../lib/util'
 const handler = async (req, res) => {
     if (req.method == 'POST') {
         const { client, db } = await connectToDatabase()
-        const collection = db.collection('shortner')
+        const collection = db.collection('shortener')
         const isConnected = await client.isConnected()
         const { url } = req.body
 
@@ -13,7 +13,9 @@ const handler = async (req, res) => {
             const record = await insertNewRecord(collection, url)
             return record
                 ? res.status(200).json(record)
-                : res.status(500).json({ error: 'Internal Server Error' })
+                : res
+                      .status(500)
+                      .json({ error: 'Internal Server Error', record: record })
         }
     }
     res.status(404)
