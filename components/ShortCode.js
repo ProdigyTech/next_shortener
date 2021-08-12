@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import { csrfToken } from '../lib/csrf'
 import { createShortLink, formatLink } from '../lib/util'
 import Loader from 'react-loader-spinner'
 
-export const ShortCodeGenerator = () => {
+export const ShortCodeGenerator = ({ csrfToken }) => {
     const [link, setLink] = useState('')
     const [shortLink, setShortLink] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -63,7 +62,14 @@ export const ShortCodeGenerator = () => {
             )}
             {shortLink && !isLoading && (
                 <div className="grid">
-                    <div className="card gen--link">
+                    <div
+                        className="card gen--link"
+                        onClick={() =>
+                            navigator.clipboard.writeText(
+                                `${location}${shortLink.shortCode}`
+                            )
+                        }
+                    >
                         {location}
                         {shortLink.shortCode}
                     </div>
