@@ -43,7 +43,7 @@ export const ShortCodeGenerator = ({ csrfToken }) => {
 
     return (
         <div class="wrapper">
-            <h1 className="title">Next Shortner</h1>
+            <h1 className="title">Next Shortener</h1>
 
             <h2 className="subtitle">
                 Enter a URL and have it shortened to make sharing easier
