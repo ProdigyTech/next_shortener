@@ -2,7 +2,7 @@ import { connectToDatabase } from '../lib/mongodb'
 
 import { useEffect } from 'react'
 
-const getUrlFromShortCode = async (collection, shortCode) => {
+ const getUrlFromShortCode = async (collection, shortCode) => {
     /** Query options specifying to mongo what we want returned from the collection */
     const queryOptions = {
         projection: { originalURL: 1, shortCode: 1 },
@@ -12,7 +12,8 @@ const getUrlFromShortCode = async (collection, shortCode) => {
         .find({ shortCode: shortCode }, queryOptions)
         .toArray()
 
-    return foundRecord
+      
+    return foundRecord ? foundRecord[0] : []
 }
 
 const redirectTo = (url = '/') => ({
@@ -25,15 +26,18 @@ const redirectTo = (url = '/') => ({
 export async function getServerSideProps(context) {
     /** Grab the short code from the url */
     const { link: shortCode } = context.query
-
+    
     const { client, db } = await connectToDatabase()
     const collection = db.collection('shortener')
     const isConnected = await client.isConnected()
 
     if (isConnected) {
+       
         /** Preform a lookup on the mongo db collection. Match the shortcode to the URL */
         const { originalURL } =
             (await getUrlFromShortCode(collection, shortCode[0])) || {}
+
+             
 
         return originalURL ? redirectTo(originalURL) : redirectTo()
     } else {
