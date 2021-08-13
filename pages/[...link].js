@@ -2,8 +2,7 @@ import { connectToDatabase } from '../lib/mongodb'
 
 import { useEffect } from 'react'
 
-const getUrlFromShortCode = async (collection, shortCode) => {]
-
+const getUrlFromShortCode = async (collection, shortCode) => {
     /** Query options specifying to mongo what we want returned from the collection */
     const queryOptions = {
         projection: { originalURL: 1, shortCode: 1 },
