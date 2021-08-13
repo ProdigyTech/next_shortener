@@ -7,6 +7,7 @@ export const ShortCodeGenerator = ({ csrfToken }) => {
     const [shortLink, setShortLink] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [location, setLocation] = useState(null)
+    const [copied, setCopied] = useState(false)
 
     useEffect(() => {
         setLocation(document.location.href)
@@ -31,12 +32,21 @@ export const ShortCodeGenerator = ({ csrfToken }) => {
         }
     }
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(`${location}${shortLink.shortCode}`)
+        setCopied(true)
+
+        setTimeout(() => {
+            setCopied(false)
+        }, 3000)
+    }
+
     return (
         <div class="wrapper">
             <h1 className="title">Next Shortner</h1>
 
             <h2 className="subtitle">
-                Enter a URL and have it Shortened to make sharing easier
+                Enter a URL and have it shortened to make sharing easier
             </h2>
 
             <input
@@ -46,7 +56,11 @@ export const ShortCodeGenerator = ({ csrfToken }) => {
                 className={`url--input`}
                 onChange={(e) => setLink(e.target.value)}
             />
-            <button className={`btn--submit`} onClick={makeRequest}>
+            <button
+                className={`btn--submit`}
+                onClick={makeRequest}
+                disabled={isLoading}
+            >
                 {' '}
                 Shorten!
             </button>
@@ -61,19 +75,18 @@ export const ShortCodeGenerator = ({ csrfToken }) => {
                 </div>
             )}
             {shortLink && !isLoading && (
-                <div className="grid">
-                    <div
-                        className="card gen--link"
-                        onClick={() =>
-                            navigator.clipboard.writeText(
-                                `${location}${shortLink.shortCode}`
-                            )
-                        }
-                    >
-                        {location}
-                        {shortLink.shortCode}
+                <>
+                    <div className="grid">
+                        <div
+                            className="card gen--link"
+                            onClick={copyToClipboard}
+                        >
+                            {location}
+                            {shortLink.shortCode}
+                        </div>
                     </div>
-                </div>
+                    {copied && `Copied to clipboard!`}
+                </>
             )}
         </div>
     )
