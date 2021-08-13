@@ -26,6 +26,8 @@ export async function getServerSideProps(context) {
     /** Grab the short code from the url */
     const { link: shortCode } = context.query
 
+    const { res } = context
+
     const { client, db } = await connectToDatabase()
     const collection = db.collection('shortener')
     const isConnected = await client.isConnected()
@@ -35,13 +37,12 @@ export async function getServerSideProps(context) {
         const { originalURL } =
             (await getUrlFromShortCode(collection, shortCode[0])) || {}
 
-        return originalURL
-            ? {
-                  props: {
-                      destinationURL: `${originalURL}`,
-                  },
-              }
-            : redirectToIndex()
+        if (originalURL) {
+            res.writeHead(301, { location: originalURL })
+            res.end()
+        } else {
+            return redirectToIndex()
+        }
     } else {
         return redirectToIndex()
     }
@@ -49,9 +50,9 @@ export async function getServerSideProps(context) {
 
 /** Redirect component, recieve destinationURL prop from the server and navigate to the page */
 const Redirect = ({ destinationURL }) => {
-    useEffect(() => {
-        window.location.replace(destinationURL)
-    }, [])
+    //     useEffect(() => {
+    //         window.location.replace(destinationURL)
+    //     }, [])
     return null
 }
 

@@ -51,7 +51,7 @@ export const ShortCodeGenerator = ({ csrfToken }) => {
 
             <input
                 value={link}
-                placeholder="https://example.com/felknjfeelknfelkn;gfnklefg/"
+                placeholder="https://www.meme-arsenal.com/memes/f146fd499738ead5ef3b2ee576ef3271.jpg"
                 type="text"
                 className={`url--input`}
                 onChange={(e) => setLink(e.target.value)}
@@ -64,6 +64,7 @@ export const ShortCodeGenerator = ({ csrfToken }) => {
                 {' '}
                 Shorten!
             </button>
+
             {isLoading && (
                 <div className="loader">
                     <Loader
