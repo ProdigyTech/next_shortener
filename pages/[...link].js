@@ -15,10 +15,10 @@ const getUrlFromShortCode = async (collection, shortCode) => {
     return foundRecord ? foundRecord[0] : []
 }
 
-const redirectToIndex = () => ({
+const redirectTo = (url = '/') => ({
     redirect: {
         permanent: true,
-        destination: '/',
+        destination: url,
     },
 })
 
@@ -37,18 +37,13 @@ export async function getServerSideProps(context) {
         const { originalURL } =
             (await getUrlFromShortCode(collection, shortCode[0])) || {}
 
-        if (originalURL) {
-            res.writeHead(301, { location: originalURL })
-            res.end()
-        } else {
-            return redirectToIndex()
-        }
+        return originalURL ? redirectTo(originalURL) : redirectToIndex()
     } else {
         return redirectToIndex()
     }
 }
 
-/** Redirect component, recieve destinationURL prop from the server and navigate to the page */
+// /** Redirect component, recieve destinationURL prop from the server and navigate to the page */
 const Redirect = ({ destinationURL }) => {
     //     useEffect(() => {
     //         window.location.replace(destinationURL)
