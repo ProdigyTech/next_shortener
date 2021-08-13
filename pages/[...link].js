@@ -26,8 +26,6 @@ export async function getServerSideProps(context) {
     /** Grab the short code from the url */
     const { link: shortCode } = context.query
 
-    const { res } = context
-
     const { client, db } = await connectToDatabase()
     const collection = db.collection('shortener')
     const isConnected = await client.isConnected()
@@ -37,9 +35,9 @@ export async function getServerSideProps(context) {
         const { originalURL } =
             (await getUrlFromShortCode(collection, shortCode[0])) || {}
 
-        return originalURL ? redirectTo(originalURL) : redirectToIndex()
+        return originalURL ? redirectTo(originalURL) : redirectTo()
     } else {
-        return redirectToIndex()
+        return redirectTo()
     }
 }
 
