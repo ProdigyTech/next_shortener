@@ -12,7 +12,7 @@ const getUrlFromShortCode = async (collection, shortCode) => {
         .find({ shortCode: shortCode }, queryOptions)
         .toArray()
 
-    return foundRecord ? foundRecord[0] : []
+    return foundRecord
 }
 
 const redirectTo = (url = '/') => ({
