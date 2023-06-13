@@ -60,6 +60,3 @@ To run the app locally, follow these steps:
 ## Deployment
 
 The app is deployed on Vercel and can be accessed at [next-shorten.vercel.app](https://next-shorten.vercel.app). When deploying the app, make sure to set the `MONGODB_URI` environment variable in your deployment settings to connect to your MongoDB database.
-
-
-Thank you for using the URL Shortener App! We hope you find it useful and enjoy using it. If you encounter any issues, please don't hesitate to reach out for support.
